@@ -23,8 +23,8 @@ def create_text_frame(container):
     return frame
 
 
-def create_button_frame(container):
-    '''Create frame with "browse" button'''
+def create_browse_frame(container):
+    '''Create frame with "browse" button and entry widget'''
 
     frame = ttk.Frame(
         container,
@@ -37,7 +37,14 @@ def create_button_frame(container):
         style = 'TButton'
     )
 
-    button.pack()
+    entry = ttk.Entry(
+        frame,
+        style = 'TEntry',
+        width = 20
+        )
+
+    entry.grid(row = 0, column = 0)
+    button.grid(row = 0, column = 1)
 
     return frame
 
@@ -47,7 +54,7 @@ def create_main_frame(container):
 
     frame = ttk.Frame(
         container,
-        padding = (5,5,5,5),
+        padding = (20, 20, 20, 20),
         style = 'TFrame',
         height = 50,
         width = 40
@@ -63,10 +70,13 @@ def create_main_window():
     window.title('image-detector')
     window.geometry('400x200')
     s = ttk.Style()
+    s.configure('TFrame', background = '#f3e6fa')
+    s.configure('TButton', sticky = 'e')
 
-    main_frame = create_main_frame(window).pack()
+    main_frame = create_main_frame(window)
     create_text_frame(main_frame).pack()
-    create_button_frame(main_frame).pack()
+    create_browse_frame(main_frame).pack()
+    main_frame.pack()
 
     window.mainloop()
 

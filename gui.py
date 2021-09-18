@@ -1,7 +1,18 @@
 # 21-09-18: Problems with styling, tkk.Style() does not seem to apply.
+# Could be solved by using tk frames instead of ttk.
 
 import tkinter as tk
 from tkinter import ttk
+from tkinter import filedialog
+
+
+def get_path():
+    dir_selected.set(filedialog.askopenfilename(
+        filetypes=[("jpeg file", "*.jpg")]))
+
+
+def get_selected_path():
+    return dir_selected.get()
 
 
 def create_text_frame(container):
@@ -26,6 +37,9 @@ def create_text_frame(container):
 def create_browse_frame(container):
     '''Create frame with "browse" button and entry widget'''
 
+    global dir_selected
+    dir_selected = tk.StringVar()
+
     frame = ttk.Frame(
         container,
         style = 'TFrame'
@@ -34,13 +48,15 @@ def create_browse_frame(container):
     button = ttk.Button(
         frame,
         text = 'Browse',
-        style = 'TButton'
+        style = 'TButton',
+        command = get_path
     )
 
     entry = ttk.Entry(
         frame,
         style = 'TEntry',
-        width = 20
+        width = 20,
+        textvariable = dir_selected
         )
 
     entry.grid(row = 0, column = 0)
@@ -70,8 +86,10 @@ def create_main_window():
     window.title('image-detector')
     window.geometry('400x200')
     s = ttk.Style()
+
     s.configure('TFrame', background = '#f3e6fa')
-    s.configure('TButton', sticky = 'e')
+    s.configure('TButton', sticky = 'e', background = 'purple')
+    s.configure('TLabel', background = 'green')
 
     main_frame = create_main_frame(window)
     create_text_frame(main_frame).pack()

@@ -4,7 +4,7 @@ from tkinter import ttk
 
 
 def create_text_frame(container):
-
+    '''Create frame with instruction text'''
     frame = ttk.Frame(container)
 
     label = ttk.Label(
@@ -20,7 +20,7 @@ def create_text_frame(container):
 
 
 def create_button_frame(container):
-
+    '''Create frame with "browse" button'''
     frame = ttk.Frame(container)
 
     button = ttk.Button(
@@ -35,6 +35,7 @@ def create_button_frame(container):
 
 
 def create_main_window():
+    '''Create frame with main window'''
     window = tk.Tk()
     window.title('image-detector')
     window.geometry('500x200')

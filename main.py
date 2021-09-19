@@ -11,7 +11,7 @@ def startup():
 
     window = tk.Tk()
     window.title('image-detector')
-    window.geometry('400x200')
+    window.geometry('600x200')
     window['bg'] = '#f3e6fa'
     s = ttk.Style()
 

@@ -28,6 +28,10 @@ def get_selected_path(dir_selected):
     return dir_selected.get()
 
 
+def update_result(result_text, result):
+    return result_text.set(result)
+
+
 def create_text_frame(container):
     ''' Create frame with text prompt '''
 
@@ -56,6 +60,7 @@ def create_info_frame(container):
 
     # If StringVar dir_selected is changed, text in entry is updated
     dir_selected = tk.StringVar()
+    result_text = tk.StringVar()
 
     frame = ttk.Frame(
         container,
@@ -76,7 +81,15 @@ def create_info_frame(container):
         style = 'TEntry',
         width = 20,
         textvariable = dir_selected
-        )
+    )
+
+    # Text field which contains image result / error messages
+    results_label = ttk.Label(
+        frame,
+        style = 'TLabel',
+        width = 35,
+        textvariable = result_text
+    )
 
     # Button to analyze image at specified path, result is displayed
     # in new label in the same frame.
@@ -84,29 +97,21 @@ def create_info_frame(container):
         frame,
         text = 'Analyze',
         style = 'TButton',
-        command = lambda: create_results_label(
-            frame,
-            analyze_image(
-                get_selected_path(dir_selected)
-            )
-        ).grid(row = 2, column = 0)
+        command = lambda: update_result(result_text,
+            analyze_image(get_selected_path(dir_selected))
+        )
     )
 
     entry.grid(row = 0, column = 0)
     choose_button.grid(row = 0, column = 1)
     analyze_button.grid(row = 1, column = 1)
+    results_label.grid(row = 2, column = 0)
 
     return frame
 
 
 def create_results_label(frame, result):
     '''Creates label contiaining results of query'''
-
-    results_label = ttk.Label(
-        frame,
-        style = 'TLabel',
-        text = result
-        )
 
     return results_label
 
@@ -119,7 +124,7 @@ def create_main_frame(container):
         padding = (20, 20, 20, 20),
         style = 'TFrame',
         height = 50,
-        width = 40
+        width = 55
         )
 
     return frame
@@ -150,7 +155,7 @@ def analyze_image(file_path):
 
     json_response = response.json()
 
-    if json_response['description'] == 'Detected objects':
+    if len(json_response['predictions']) > 0:
         result = []
         for item in json_response['predictions']:
             result.append(item['label'])

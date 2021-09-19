@@ -1,18 +1,25 @@
-# 21-09-18: Problems with styling, tkk.Style() does not seem to apply.
-# Could be solved by using tk frames instead of ttk.
+# 21-09-18: Problems with styling, tkk.Style() does not apply on mac.
+
+import requests
+import json
 
 import tkinter as tk
 from tkinter import ttk
 from tkinter import filedialog
 
+from analyzer import analyze_image
 
-def get_path():
+
+def enter_path():
     '''
     Opens file dialog, selected png file is saved in StringVar
     dir_selected.
     '''
-    dir_selected.set(filedialog.askopenfilename(
-        filetypes=[("jpeg file", "*.jpg")]))
+    dialog_response = filedialog.askopenfilename(
+        filetypes=[("jpeg file", "*.jpg")]
+    )
+
+    dir_selected.set(dialog_response)
 
 
 def get_selected_path():
@@ -57,7 +64,7 @@ def create_browse_frame(container):
         frame,
         text = 'Browse',
         style = 'TButton',
-        command = get_path
+        command = enter_path
     )
 
     entry = ttk.Entry(
@@ -76,6 +83,7 @@ def create_browse_frame(container):
 
     entry.grid(row = 0, column = 0)
     choose_button.grid(row = 0, column = 1)
+    analyze_button.grid(row = 1, column = 1)
 
     return frame
 
@@ -94,26 +102,27 @@ def create_main_frame(container):
     return frame
 
 
-def create_main_window():
-    ''' Create window and start loop '''
+def analyze_image():
+    '''
+    Sends file specified by path to openvisionapi and returns
+    tuple of prediction and accuracy.
+    '''
+    URL = 'https://api.openvisionapi.com'
+    PATH = '/api/v1/detection'
 
-    window = tk.Tk()
-    window.title('image-detector')
-    window.geometry('400x200')
-    window['bg'] = '#f3e6fa'
-    s = ttk.Style()
+    with open(file_path, 'rb') as f:
+        image_bytes = f.read()
 
-    s.configure('TFrame', background = window['bg'])
-    s.configure('TButton', sticky = 'e', background = window['bg'])
-    s.configure('TLabel', background = window['bg'])
+    url = URL + PATH
 
-    main_frame = create_main_frame(window)
-    create_text_frame(main_frame).pack()
-    create_browse_frame(main_frame).pack()
-    main_frame.pack()
+    files = {'image': (file_path, image_bytes, 'image/jpeg')}
 
-    window.mainloop()
+    body = {'model': 'yolov4'}
 
+    response = requests.post(url=url, files=files, data=body)
 
-if __name__ == '__main__':
-    create_main_window()
+    json_response = response.json()
+
+    if json_response['description'] == 'Detected objects':
+        return (json_response['predictions']['label'],
+                json_response['predictions']['score'])

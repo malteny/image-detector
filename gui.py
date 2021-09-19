@@ -8,7 +8,7 @@ from tkinter import ttk
 from tkinter import filedialog
 
 
-def enter_path():
+def enter_path(dir_selected):
     '''
     Opens file dialog, selected png file is saved in StringVar
     dir_selected.
@@ -17,10 +17,10 @@ def enter_path():
         filetypes=[("jpeg file", "*.jpg")]
     )
 
-    dir_selected.set(dialog_response)
+    return dir_selected.set(dialog_response)
 
 
-def get_selected_path():
+def get_selected_path(dir_selected):
     ''' Used to access StringVar dir_selected '''
     return dir_selected.get()
 
@@ -47,10 +47,9 @@ def create_text_frame(container):
 def create_browse_frame(container):
     '''
     Create frame with "browse" button, entry widget and
-    submit button. Instantiates dir_selected globally.
+    submit button. Instantiates dir_selected.
     '''
 
-    global dir_selected
     dir_selected = tk.StringVar()
 
     frame = ttk.Frame(
@@ -62,7 +61,7 @@ def create_browse_frame(container):
         frame,
         text = 'Browse',
         style = 'TButton',
-        command = enter_path
+        command = lambda: enter_path(dir_selected)
     )
 
     entry = ttk.Entry(
@@ -76,7 +75,7 @@ def create_browse_frame(container):
         frame,
         text = 'Analyze',
         style = 'TButton',
-        command = analyze_image
+        command = lambda: analyze_image(get_selected_path(dir_selected))
         )
 
     entry.grid(row = 0, column = 0)
@@ -100,16 +99,13 @@ def create_main_frame(container):
     return frame
 
 
-def analyze_image():
+def analyze_image(file_path):
     '''
     Sends file specified by path to openvisionapi and returns
     tuple of prediction and accuracy.
     '''
     URL = 'https://api.openvisionapi.com'
     PATH = '/api/v1/detection'
-
-    file_path = get_selected_path()
-    print(file_path)
 
     if not file_path:
         return 0

@@ -21,7 +21,7 @@ def startup():
 
     main_frame = gui.create_main_frame(window)
     gui.create_text_frame(main_frame).pack()
-    gui.create_browse_frame(main_frame).pack()
+    gui.create_info_frame(main_frame).pack()
     main_frame.pack()
 
     window.mainloop()

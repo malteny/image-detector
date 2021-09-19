@@ -7,8 +7,6 @@ import tkinter as tk
 from tkinter import ttk
 from tkinter import filedialog
 
-from analyzer import analyze_image
-
 
 def enter_path():
     '''
@@ -110,6 +108,12 @@ def analyze_image():
     URL = 'https://api.openvisionapi.com'
     PATH = '/api/v1/detection'
 
+    file_path = get_selected_path()
+    print(file_path)
+
+    if not file_path:
+        return 0
+
     with open(file_path, 'rb') as f:
         image_bytes = f.read()
 
@@ -124,5 +128,10 @@ def analyze_image():
     json_response = response.json()
 
     if json_response['description'] == 'Detected objects':
-        return (json_response['predictions']['label'],
-                json_response['predictions']['score'])
+        results = []
+        for item in json_response['predictions']:
+            print(item['label'])
+            results.append(item['label'])
+            results.append(item['score'])
+
+        return results

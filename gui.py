@@ -136,13 +136,14 @@ def analyze_image(file_path):
     if not file_path:
         return 'No path specified'
 
-    with open(file_path, 'rb') as f:
-        image_bytes = f.read()
+    try:
+        with open(file_path, 'rb') as f:
+            image_bytes = f.read()
+    except FileNotFoundError:
+        return 'File not found, try another path'
 
     url = URL + PATH
-
     files = {'image': (file_path, image_bytes, 'image/jpeg')}
-
     body = {'model': 'yolov4'}
 
     response = requests.post(url=url, files=files, data=body)

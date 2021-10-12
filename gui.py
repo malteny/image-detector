@@ -110,12 +110,6 @@ def create_info_frame(container):
     return frame
 
 
-def create_results_label(frame, result):
-    '''Creates label contiaining results of query'''
-
-    return results_label
-
-
 def create_main_frame(container):
     ''' Creates main frame inside window '''
 
